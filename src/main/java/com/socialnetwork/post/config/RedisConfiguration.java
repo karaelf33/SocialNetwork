@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import java.time.Duration;
 
 @Configuration
-class RedidConfiguration {
+class RedisConfiguration {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
