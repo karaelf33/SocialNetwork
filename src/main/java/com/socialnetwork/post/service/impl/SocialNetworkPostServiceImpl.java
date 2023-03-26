@@ -81,16 +81,18 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService {
     }
 
     @Override
-    @Cacheable(cacheNames = TOP_TEN_POSTS_CACHE_KEY)
+    @Cacheable(value = TOP_TEN_POSTS_CACHE_KEY, key = "#root.method.name", condition = "false")
     public List<PostResponseDTO> getTopTenPostByViewCount() {
 
         logger.info("Entering getTopTenPostByViewCount()");
 
         List<PostResponseDTO> topTenPosts = new ObjectMapper().convertValue(
-                cacheService.getAll(TOP_TEN_POSTS_CACHE_KEY),
-                new TypeReference<List<PostResponseDTO>>() {});
-        if (topTenPosts.size()==0) {
-            List<SocialNetworkPost> topPostsByViewCountDesc = postRepository.findTopPostsByViewCountDesc(10);
+                cacheService.get(TOP_TEN_POSTS_CACHE_KEY), new TypeReference<>() {
+
+                });
+
+        if (topTenPosts==null || topTenPosts.isEmpty()) {
+            List<SocialNetworkPost> topPostsByViewCountDesc = postRepository.findTop10ByOrderByViewCountDesc();
             List<PostResponseDTO> postResponseDTOS = postMapper.toDtoList(topPostsByViewCountDesc);
             topTenPosts = new ArrayList<>(postResponseDTOS);
             cacheService.put(TOP_TEN_POSTS_CACHE_KEY, topTenPosts);
@@ -99,5 +101,6 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService {
 
         return topTenPosts;
     }
+    // TODO unit test +generic response +properly caching+clean code +readme+
 
 }
