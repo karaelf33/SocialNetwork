@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper(componentModel = "spring",uses = SocialNetworkPost.class)
+
 public interface SocialNetworkPostMapper {
 
     PostResponseDTO toDto(SocialNetworkPost post);
