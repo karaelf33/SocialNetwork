@@ -1,7 +1,5 @@
 package com.socialnetwork.post.cache;
 
-import java.util.List;
-
 public interface CacheService {
 
     void put(String key, Object value);

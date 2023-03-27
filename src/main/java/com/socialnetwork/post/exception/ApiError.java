@@ -18,6 +18,4 @@ public class ApiError {
         this.cause = cause;
     }
 
-    // constructors, getters, and setters
-
 }

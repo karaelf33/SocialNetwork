@@ -48,10 +48,8 @@ class SocialNetworkPostServiceImplTest {
         when(postRepository.save(post)).thenReturn(post);
         when(postMapper.toDto(post)).thenReturn(postDTO);
 
-        // When
         PostResponseDTO createdPostDTO = postService.createPost(postDTO);
 
-        // Then
         assertNotNull(createdPostDTO);
         assertEquals(postDTO.getAuthor(), createdPostDTO.getAuthor());
         assertEquals(postDTO.getContent(), createdPostDTO.getContent());
@@ -62,7 +60,6 @@ class SocialNetworkPostServiceImplTest {
 
     @Test
     public void testGetPostByIdWhenPostExists() {
-        // Arrange
         Long postId = 1L;
         SocialNetworkPost post = new SocialNetworkPost();
         PostResponseDTO expectedDto = new PostResponseDTO();
@@ -70,10 +67,8 @@ class SocialNetworkPostServiceImplTest {
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(postMapper.toDto(post)).thenReturn(expectedDto);
 
-        // Act
         PostResponseDTO actualDto = postService.getPostById(postId);
 
-        // Assert
         assertEquals(expectedDto, actualDto);
     }
 

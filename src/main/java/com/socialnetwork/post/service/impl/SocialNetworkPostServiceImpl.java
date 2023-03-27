@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
 
@@ -71,6 +70,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
         SocialNetworkPost post = postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
         post.setContent(content);
         SocialNetworkPost updatedPost = postRepository.save(post);
+        logger.info("Post with id: {} has been updated successfully", postId);
 
         return postMapper.toDto(updatedPost);
     }
