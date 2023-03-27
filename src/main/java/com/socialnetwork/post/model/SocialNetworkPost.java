@@ -1,6 +1,7 @@
 package com.socialnetwork.post.model;
 
 
+import com.socialnetwork.post.utils.ViewCountable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -22,7 +24,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SocialNetworkPost {
+public class SocialNetworkPost implements ViewCountable, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

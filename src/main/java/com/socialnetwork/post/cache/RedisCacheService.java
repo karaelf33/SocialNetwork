@@ -1,8 +1,10 @@
 package com.socialnetwork.post.cache;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class RedisCacheService implements CacheService{
@@ -23,12 +25,13 @@ public class RedisCacheService implements CacheService{
     }
 
     @Override
-    public List<Object> getAll(String key) {
-        return redisTemplate.opsForList().range(key, 0, -1);
+    public void delete(String key) {
+        redisTemplate.delete(key);
     }
 
     @Override
-    public void delete(String key) {
-        redisTemplate.delete(key);
+    public void replace(String key, Object value) {
+        this.delete(key);
+        this.put(key,value);
     }
 }

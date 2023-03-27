@@ -53,6 +53,9 @@ public class SocialNetworkPostController {
         return postService.updatePostContentById(postId, content);
     }
 
+    // TODO: In the future, we may need to limit the number of parameters that this method can receive.
+    //  For example, we might need to find only the top 20 parameters.
+    //  To make this method more flexible and adaptable to such changes, it should be made generic.
     @GetMapping("/top-ten")
     public List<PostResponseDTO> getTopTenPostByViewCount() {
         return postService.getTopTenPostByViewCount();

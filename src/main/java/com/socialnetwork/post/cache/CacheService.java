@@ -8,7 +8,7 @@ public interface CacheService {
 
     Object get(String key);
 
-    List<Object> getAll(String key);
-
     void delete(String key);
+
+    void replace(String key, Object value);
 }
