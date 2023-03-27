@@ -21,23 +21,25 @@ Then, you can follow these steps:
 ## Modules
 [CACHE](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcache) : This module contains the caching logic for the top 10 most popular social network posts.
 
-[config](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fconfig)
+[Unit/Integration Tests](src%2Ftest)
 
-[controller](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcontroller) : This module contains the RESTful API endpoints for managing social network posts and comments.
+[Config](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fconfig)
 
-[dto](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fdto)
+[Controller](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcontroller) : This module contains the RESTful API endpoints for managing social network posts and comments.
 
-[exception](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fexception)
+[Dto](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fdto)
 
-[mapper](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fmapper)
+[Exception](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fexception)
 
-[model](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fmodel)
+[Mapper](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fmapper)
+
+[Model](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fmodel)
 
 [Repository](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Frepository) This module contains the JPA repositories for persisting social network posts and comments to a database
 
-[service](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fservice)
+[Service](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fservice)
 
-[utils](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Futils) :This module contains utility classes used by other modules.
+[Utils](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Futils) :This module contains utility classes used by other modules.
 
 ## Contributing
 
