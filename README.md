@@ -19,11 +19,11 @@ Then, you can follow these steps:
 3. Run [PostApplication.java](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2FPostApplication.java) to start the server
 
 ## Modules
-[CACHE](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcache)
+[CACHE](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcache) : This module contains the caching logic for the top 10 most popular social network posts.
 
 [config](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fconfig)
 
-[controller](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcontroller)
+[controller](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fcontroller) : This module contains the RESTful API endpoints for managing social network posts and comments.
 
 [dto](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fdto)
 
@@ -33,11 +33,11 @@ Then, you can follow these steps:
 
 [model](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fmodel)
 
-[repository](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Frepository)
+[Repository](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Frepository) This module contains the JPA repositories for persisting social network posts and comments to a database
 
 [service](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Fservice)
 
-[utils](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Futils)
+[utils](src%2Fmain%2Fjava%2Fcom%2Fsocialnetwork%2Fpost%2Futils) :This module contains utility classes used by other modules.
 
 ## Contributing
 
