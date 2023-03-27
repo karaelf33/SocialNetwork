@@ -87,4 +87,40 @@ class SocialNetworkPostServiceImplTest {
         assertEquals("Post not found with id " + postId, exception.getMessage());;
     }
 
+    @Test
+    public void testUpdatePostContentByIdWhenPostExists() {
+        Long postId = 1L;
+        String content = "new content";
+        SocialNetworkPost post = new SocialNetworkPost();
+        post.setId(postId);
+        post.setContent("old content");
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(postRepository.save(post)).thenReturn(post);
+        PostResponseDTO postDTO = new PostResponseDTO();
+        postDTO.setId(postId);
+        postDTO.setContent(content);
+        when(postMapper.toDto(post)).thenReturn(postDTO);
+
+        PostResponseDTO updatedPostDTO = postService.updatePostContentById(postId, content);
+
+        assertNotNull(updatedPostDTO);
+        assertEquals(postDTO, updatedPostDTO);
+        verify(postRepository, times(1)).findById(postId);
+        verify(postRepository, times(1)).save(post);
+        verify(postMapper, times(1)).toDto(post);
+        verifyNoMoreInteractions(postRepository, postMapper);
+    }
+
+    @Test
+    public void testUpdatePostContentByIdWhenPostDoesNotExist() {
+        Long postId = 1L;
+        String content = "new content";
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> postService.updatePostContentById(postId, content));
+        verify(postRepository, times(1)).findById(postId);
+        verifyNoMoreInteractions(postRepository, postMapper);
+    }
+
 }

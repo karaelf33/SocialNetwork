@@ -68,13 +68,9 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
 
     @Override
     public PostResponseDTO updatePostContentById(Long postId, String content) {
-        Optional<SocialNetworkPost> post = postRepository.findById(postId);
-        if (post.isEmpty()) {
-            System.out.println("post not found");
-            return null;
-        }
-        post.get().setContent(content);
-        SocialNetworkPost updatedPost = postRepository.save(post.get());
+        SocialNetworkPost post = postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
+        post.setContent(content);
+        SocialNetworkPost updatedPost = postRepository.save(post);
 
         return postMapper.toDto(updatedPost);
     }
@@ -92,15 +88,6 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
         replaceNewPostIfViewCountBiggerThenInCache(post, cacheTopsPost);
 
         return postMapper.toDto(post);
-    }
-
-    private void replaceNewPostIfViewCountBiggerThenInCache(SocialNetworkPost post, List<SocialNetworkPost> cacheTopsPost) {
-        if (!cacheTopsPost.contains(post) && cacheTopsPost.get(9).getViewCount() < post.getViewCount()) {
-            cacheTopsPost.remove(9);
-            cacheTopsPost.add(post);
-            cacheTopsPost.sort(Comparator.comparingLong(SocialNetworkPost::getViewCount).reversed());
-            cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, cacheTopsPost);
-        }
     }
 
     @Override
@@ -136,6 +123,18 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
         cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, postList);
 
     }
+
+    @Override
+    public void replaceNewPostIfViewCountBiggerThenInCache(SocialNetworkPost post,
+                                                           List<SocialNetworkPost> cacheTopsPost) {
+        if (!cacheTopsPost.contains(post) && cacheTopsPost.get(9).getViewCount() < post.getViewCount()) {
+            cacheTopsPost.remove(9);
+            cacheTopsPost.add(post);
+            cacheTopsPost.sort(Comparator.comparingLong(SocialNetworkPost::getViewCount).reversed());
+            cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, cacheTopsPost);
+        }
+    }
+
 }
 
 // TODO : unit/Integration test +generic response +properly caching

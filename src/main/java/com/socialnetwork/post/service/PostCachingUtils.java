@@ -10,4 +10,7 @@ public interface PostCachingUtils {
 
     void updatePostViewCountInList(SocialNetworkPost post,
                                    List<SocialNetworkPost> postList);
+
+    void replaceNewPostIfViewCountBiggerThenInCache(SocialNetworkPost post,
+                                                    List<SocialNetworkPost> cacheTopsPost);
 }
