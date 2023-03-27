@@ -11,6 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDTO implements Serializable {
+
+    private Long id;
     private Date postDate;
     private String author;
     private String content;

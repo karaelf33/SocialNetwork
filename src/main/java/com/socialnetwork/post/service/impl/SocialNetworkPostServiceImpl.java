@@ -48,7 +48,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     @Override
     public PostResponseDTO getPostById(Long postId) {
         SocialNetworkPost socialNetworkPost = postRepository.findById(postId)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         return postMapper.toDto(socialNetworkPost);
     }
 
@@ -56,10 +56,13 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     public void deletePostById(Long postId) {
         SocialNetworkPost postToDelete = postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
         postRepository.delete(postToDelete);
+        logger.info("Post with ID {} deleted", postId);
+
         List<SocialNetworkPost> cacheTopsPost = getTopsPostFromCache();
         if (cacheTopsPost.contains(postToDelete)) {
             List<SocialNetworkPost> updatedTopPosts = postRepository.findTop10ByOrderByViewCountDesc();
             cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, updatedTopPosts);
+            logger.info("Top posts cache updated");
         }
     }
 
@@ -139,6 +142,4 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
 //  Log mechanism + README.md documentation+Exception mechanism
 //  Add spring actuator +clean code
 //  add Controller advice
-           /* ViewCountQueue<SocialNetworkPost> queue = new ViewCountQueue<>(10);
-            queue.addAll(topPostsByViewCountDesc);*/
 

@@ -49,4 +49,10 @@ public class SocialNetworkPost implements ViewCountable, Serializable {
         this.content = content;
         this.viewCount = viewCount;
     }
+    public SocialNetworkPost(long id, String author, String content, Long viewCount) {
+        this.id = id;
+        this.author = author;
+        this.content = content;
+        this.viewCount = viewCount;
+    }
 }
