@@ -5,8 +5,8 @@ In the project you can create,update,delete,read post and moreover you can
 You can find the top 10 views posts
 ## Features
 
-- Feature 1: Does something cool
-- Feature 2: Also does something cool
+- Redis Cache: Does something cool
+- Flyway: Also does something cool
 - Feature 3: Does something else that's cool
 
 ## Getting started
@@ -58,7 +58,7 @@ This project is released under the MIT License.
 If you have any questions or want to report a bug, please contact me at bestasyusuf8@gmail.com.
 
 
-Important Rest APIS->
+## Important Rest API Examples->
 
 http://localhost:8080/actuator
 
