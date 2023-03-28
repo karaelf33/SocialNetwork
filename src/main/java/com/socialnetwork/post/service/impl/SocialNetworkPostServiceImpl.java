@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.socialnetwork.post.utils.Constants.LAST_ITEM_OF_POST_LIST_IN_CACHE;
 import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
 
 
@@ -43,6 +44,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         return postMapper.toDto(socialNetworkPost);
     }
+
     @Override
     public PostResponseDTO createPost(PostResponseDTO postDTO) {
         SocialNetworkPost post = postMapper.fromDto(postDTO);
@@ -83,11 +85,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
 
         post.setViewCount(post.getViewCount() + viewCount);
         postRepository.save(post);
-
-        List<SocialNetworkPost> cacheTopsPost = getTopsPostFromCache();
-        updatePostViewCountInList(post, cacheTopsPost);
-        replaceNewPostIfViewCountBiggerThenInCache(post, cacheTopsPost);
-
+        replaceTopPostsCacheIfNewPostHasHigerViewCount(post);
         return postMapper.toDto(post);
     }
 
@@ -112,34 +110,19 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
                 });
     }
 
+    // warm: should call this function when update any post view count
     @Override
-    public void updatePostViewCountInList(SocialNetworkPost post,
-                                          List<SocialNetworkPost> postList) {
-        for (SocialNetworkPost post2 : postList) {
-            if (post2.getId().equals(post.getId())) {
-                post2.setViewCount(post.getViewCount());
-                break;
-            }
+    public void replaceTopPostsCacheIfNewPostHasHigerViewCount(SocialNetworkPost newPost) {
+        List<SocialNetworkPost> topsPostFromCache = getTopsPostFromCache();
+        if (topsPostFromCache.contains(newPost)) {
+            topsPostFromCache.set(topsPostFromCache.indexOf(newPost), newPost);
+        } else if (topsPostFromCache.get(LAST_ITEM_OF_POST_LIST_IN_CACHE).getViewCount() < newPost.getViewCount()) {
+            topsPostFromCache.remove(LAST_ITEM_OF_POST_LIST_IN_CACHE);
+            topsPostFromCache.add(newPost);
+            topsPostFromCache.sort(Comparator.comparingLong(SocialNetworkPost::getViewCount).reversed());
         }
-        cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, postList);
-
-    }
-
-    @Override
-    public void replaceNewPostIfViewCountBiggerThenInCache(SocialNetworkPost post,
-                                                           List<SocialNetworkPost> cacheTopsPost) {
-        if (!cacheTopsPost.contains(post) && cacheTopsPost.get(9).getViewCount() < post.getViewCount()) {
-            cacheTopsPost.remove(9);
-            cacheTopsPost.add(post);
-            cacheTopsPost.sort(Comparator.comparingLong(SocialNetworkPost::getViewCount).reversed());
-            cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, cacheTopsPost);
-        }
+        cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, topsPostFromCache);
     }
 
 }
-
-// TODO : unit/Integration test +generic response +properly caching
-//  Log mechanism + README.md documentation+Exception mechanism
-//  Add spring actuator +clean code
-//  add Controller advice
 

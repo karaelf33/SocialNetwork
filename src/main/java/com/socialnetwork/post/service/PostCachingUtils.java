@@ -7,10 +7,5 @@ import java.util.List;
 public interface PostCachingUtils {
 
     List<SocialNetworkPost> getTopsPostFromCache();
-
-    void updatePostViewCountInList(SocialNetworkPost post,
-                                   List<SocialNetworkPost> postList);
-
-    void replaceNewPostIfViewCountBiggerThenInCache(SocialNetworkPost post,
-                                                    List<SocialNetworkPost> cacheTopsPost);
+    void replaceTopPostsCacheIfNewPostHasHigerViewCount(SocialNetworkPost post);
 }
