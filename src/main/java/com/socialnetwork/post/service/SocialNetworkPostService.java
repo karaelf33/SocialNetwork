@@ -5,8 +5,8 @@ import com.socialnetwork.post.dto.PostResponseDTO;
 import java.util.List;
 
 public interface SocialNetworkPostService {
-    PostResponseDTO createPost(PostResponseDTO postDTO);
     PostResponseDTO getPostById(Long postId);
+    PostResponseDTO createPost(PostResponseDTO postDTO);
 
     void deletePostById(Long postId);
 

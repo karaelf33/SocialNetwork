@@ -38,17 +38,18 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     }
 
     @Override
-    public PostResponseDTO createPost(PostResponseDTO postDTO) {
-        SocialNetworkPost post = postMapper.fromDto(postDTO);
-        SocialNetworkPost save = postRepository.save(post);
-        return postMapper.toDto(save);
-    }
-
-    @Override
     public PostResponseDTO getPostById(Long postId) {
         SocialNetworkPost socialNetworkPost = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         return postMapper.toDto(socialNetworkPost);
+    }
+    @Override
+    public PostResponseDTO createPost(PostResponseDTO postDTO) {
+        SocialNetworkPost post = postMapper.fromDto(postDTO);
+        SocialNetworkPost save = postRepository.save(post);
+        logger.info("Post with ID {} created", save.getId());
+        return postMapper.toDto(save);
+
     }
 
     @Override
