@@ -61,7 +61,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
         logger.info("Post with ID {} deleted", postId);
 
         List<SocialNetworkPost> cacheTopsPost = getTopsPostFromCache();
-        if (cacheTopsPost.contains(postToDelete)) {
+        if (cacheTopsPost!=null && cacheTopsPost.contains(postToDelete)) {
             List<SocialNetworkPost> updatedTopPosts = postRepository.findTop10ByOrderByViewCountDesc();
             cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, updatedTopPosts);
             logger.info("Top posts cache updated");
@@ -110,7 +110,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
                 });
     }
 
-    // warm: should call this function when update any post view count
+    // Warm: should call this func when update any post view count
     @Override
     public void replaceTopPostsCacheIfNewPostHasHigerViewCount(SocialNetworkPost newPost) {
         List<SocialNetworkPost> topsPostFromCache = getTopsPostFromCache();
