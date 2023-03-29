@@ -4,10 +4,9 @@
 In the project you can create,update,delete,read post and moreover you can
 You can find the top 10 views posts
 ## Features
-
+ 
 - Redis Cache:It caches the 10 posts with the highest view count.It also checks every post that has a view update. If a new update view count is higher than the lowest post view count in the cache, it swaps
-- Flyway: Also does something cool
-- Feature 3: Does something else that's cool
+- Flyway:  Helps you implement automated and version-based database migrations. It allows you to define the required update operations in an SQL script or as Java code
 
 ## Getting started
 
