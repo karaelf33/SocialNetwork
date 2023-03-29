@@ -4,8 +4,8 @@
 In the project you can create,update,delete,read post and moreover you can
 You can find the top 10 views posts
 ## Features
- -Crud Posts :Available for creating new posts, updating,read and deleting.
- -Higest Posts : Shows the highest viewed posts.
+- Crud Posts :Available for creating new posts, updating,read and deleting.
+- Higest Posts : Shows the highest viewed posts.
 - Redis Cache:It caches the 10 posts with the highest view count.It also checks every post that has a view update. If a new update view count is higher than the lowest post view count in the cache, it swaps
 - Flyway:  Helps you implement automated and version-based database migrations. It allows you to define the required update operations in an SQL script or as Java code
 
