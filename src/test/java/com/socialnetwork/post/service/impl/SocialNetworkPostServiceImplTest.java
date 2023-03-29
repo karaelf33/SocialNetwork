@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.socialnetwork.post.utils.Constants.AUTHOR;
+import static com.socialnetwork.post.utils.Constants.CONTENT;
 import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,7 +53,7 @@ class SocialNetworkPostServiceImplTest {
         // Given
         PostResponseDTO postDTO = new PostResponseDTO();
         postDTO.setAuthor(AUTHOR);
-        postDTO.setContent("Content");
+        postDTO.setContent(CONTENT);
         SocialNetworkPost post = new SocialNetworkPost();
         post.setId(1L);
         post.setAuthor(postDTO.getAuthor());
@@ -149,11 +150,11 @@ class SocialNetworkPostServiceImplTest {
     @Test
     void createPost_shouldReturnCreatedPost() {
         PostResponseDTO postDTO = new PostResponseDTO();
-        postDTO.setContent("Test Content");
-        postDTO.setAuthor("Test Author");
+        postDTO.setContent(CONTENT);
+        postDTO.setAuthor(AUTHOR);
         SocialNetworkPost post = new SocialNetworkPost();
-        post.setContent("Test Content");
-        post.setAuthor("Test Author");
+        post.setContent(CONTENT);
+        post.setAuthor(AUTHOR);
         post.setId(1L);
         when(postMapper.fromDto(postDTO)).thenReturn(post);
         when(postRepository.save(post)).thenReturn(post);
@@ -165,7 +166,7 @@ class SocialNetworkPostServiceImplTest {
         verify(postRepository, times(1)).save(post);
         verify(postMapper, times(1)).toDto(post);
         assertNotNull(result);
-        assertEquals("Test Author", result.getAuthor());
-        assertEquals("Test Content", result.getContent());
+        assertEquals(AUTHOR, result.getAuthor());
+        assertEquals(CONTENT, result.getContent());
     }
 }
