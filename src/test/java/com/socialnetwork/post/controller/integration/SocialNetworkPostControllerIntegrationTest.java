@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.socialnetwork.post.utils.Constants.AUTHOR;
@@ -28,6 +30,7 @@ import static com.socialnetwork.post.utils.Constants.CONTENT;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -90,5 +93,25 @@ public class SocialNetworkPostControllerIntegrationTest {
         assertEquals(expected.getAuthor(), actual.getAuthor());
     }
 
+    @Test
+    public void returnPost_whenPostFound() throws Exception {
+        SocialNetworkPost post = new SocialNetworkPost(Date.from(Instant.now()), AUTHOR, CONTENT, 2L);
+        SocialNetworkPost saved = postRepository.save(post);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/api/posts/{id}", saved.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(saved.getId()));
+
+    }
+
+    @Test
+    public void returnException_whenPostNotFound() throws Exception {
+        Long postId = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/api/posts/{id}", postId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> assertEquals("Post not found with id " + postId,
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
 
 }
