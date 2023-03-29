@@ -1,13 +1,10 @@
 package com.socialnetwork.post.service.impl;
 
 import com.socialnetwork.post.cache.CacheService;
-import com.socialnetwork.post.cache.RedisCacheService;
 import com.socialnetwork.post.dto.PostResponseDTO;
 import com.socialnetwork.post.mapper.SocialNetworkPostMapper;
 import com.socialnetwork.post.model.SocialNetworkPost;
 import com.socialnetwork.post.repository.SocialNetworkPostRepository;
-import com.socialnetwork.post.service.PostCachingUtils;
-import lombok.Lombok;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,20 +12,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
+import static com.socialnetwork.post.utils.Constants.AUTHOR;
 import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -57,7 +51,7 @@ class SocialNetworkPostServiceImplTest {
     void shouldCreatePostSuccessfully() {
         // Given
         PostResponseDTO postDTO = new PostResponseDTO();
-        postDTO.setAuthor("author");
+        postDTO.setAuthor(AUTHOR);
         postDTO.setContent("Content");
         SocialNetworkPost post = new SocialNetworkPost();
         post.setId(1L);
@@ -174,15 +168,4 @@ class SocialNetworkPostServiceImplTest {
         assertEquals("Test Author", result.getAuthor());
         assertEquals("Test Content", result.getContent());
     }
-
-    //When the new post is already in the cache, and its view count is higher than the existing one.
-
-  /*  In addition, you should add unit tests to cover the following scenarios:
-
-
-    When the new post is not in the cache, and the cache is already full but the new post has a higher view count than the lowest-ranked post.
-    When the new post is not in the cache, and the cache is already full and the new post has a lower view count than the lowest-ranked post.
-*/
-
-
 }

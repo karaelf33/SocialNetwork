@@ -18,4 +18,10 @@ public class PostResponseDTO implements Serializable {
     private String content;
     private Long viewCount;
 
+    public PostResponseDTO(Date postDate, String author, String content, Long viewCount) {
+        this.postDate = postDate;
+        this.author = author;
+        this.content = content;
+        this.viewCount = viewCount;
+    }
 }
