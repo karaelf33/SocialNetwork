@@ -11,6 +11,7 @@ import com.socialnetwork.post.service.PostCachingUtils;
 import com.socialnetwork.post.service.SocialNetworkPostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     }
 
     @Override
-    public void deletePostById(Long postId) {
+    public PostResponseDTO deletePostById(Long postId) {
         SocialNetworkPost postToDelete = postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
         postRepository.delete(postToDelete);
         logger.info("Post with ID {} deleted", postId);
@@ -66,7 +67,9 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
             cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, updatedTopPosts);
             logger.info("Top posts cache updated");
         }
+    return postMapper.toDto(postToDelete);
     }
+
 
     @Override
     public PostResponseDTO updatePostContentById(Long postId, String content) {
@@ -90,19 +93,20 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     }
 
     @Override
-    @Cacheable(value = TOP_TEN_POSTS_CACHE_KEY, key = "#root.method.name", condition = "false")
+    @Cacheable(value = TOP_TEN_POSTS_CACHE_KEY)
     public List<PostResponseDTO> getTopTenPostByViewCount() {
         logger.info("Entering getTopTenPostByViewCount()");
-        List<SocialNetworkPost> topTenPosts = getTopsPostFromCache();
+        List<SocialNetworkPost> topTenPosts =  postRepository.findTop10ByOrderByViewCountDesc();
+        List<PostResponseDTO> dtoList = postMapper.toDtoList(topTenPosts);
+        logger.info("Returning topTenPosts: {}", dtoList);
 
-        if (topTenPosts==null || topTenPosts.isEmpty()) {
-            topTenPosts = postRepository.findTop10ByOrderByViewCountDesc();
-            cacheService.put(TOP_TEN_POSTS_CACHE_KEY, topTenPosts);
-        }
-        return postMapper.toDtoList(topTenPosts);
+        return dtoList;
     }
 
-
+    @CacheEvict(value = TOP_TEN_POSTS_CACHE_KEY, key = "'topTenPosts'")
+    public void evictTopTenPostsCache() {
+        logger.info("Evicting topTenPosts cache");
+    }
     @Override
     public List<SocialNetworkPost> getTopsPostFromCache() {
         return new ObjectMapper().convertValue(

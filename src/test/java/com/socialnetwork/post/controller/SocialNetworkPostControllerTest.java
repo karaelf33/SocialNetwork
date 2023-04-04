@@ -12,20 +12,28 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.RequestEntity.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
 class SocialNetworkPostControllerTest {
@@ -53,7 +61,7 @@ class SocialNetworkPostControllerTest {
         postResponseDTO.setId(postId);
         Mockito.when(postService.getPostById(postId)).thenReturn(postResponseDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/api/posts/{id}", postId))
+        mockMvc.perform(get("/v1/api/posts/{id}", postId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(postId));
 
@@ -66,7 +74,7 @@ class SocialNetworkPostControllerTest {
         Long postId = 1L;
         Mockito.when(postService.getPostById(postId)).thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/api/posts/{id}", postId))
+        mockMvc.perform(get("/v1/api/posts/{id}", postId))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
                 .andExpect(result -> assertEquals("Post not found with id " + postId,
@@ -94,4 +102,46 @@ class SocialNetworkPostControllerTest {
 
         verify(postService, times(1)).createPost(postRequestDTO);
     }
+
+    @Test
+    void getTopTenPostByViewCount_returnListOfPosts() throws Exception {
+        List<PostResponseDTO> expectedPosts = Arrays.asList(new PostResponseDTO(), new PostResponseDTO(), new PostResponseDTO());
+        when(postService.getTopTenPostByViewCount()).thenReturn(expectedPosts);
+
+        mockMvc.perform(get("/v1/api/posts/top-ten")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(postService, times(1)).getTopTenPostByViewCount();
+    }
+
+    @Test
+    void deletePostWhenIfPostExist_and_return_DeletedPost() throws Exception {
+        PostResponseDTO deletePost = new PostResponseDTO();
+        deletePost.setId(1L);
+
+        when(postService.deletePostById(deletePost.getId())).thenReturn(deletePost);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", deletePost.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author", is(deletePost.getAuthor())));
+
+        verify(postService, times(1)).deletePostById(deletePost.getId());
+
+    }
+
+    @Test
+    void deletePostWhenIfNotExist_and_throwException() throws Exception {
+        PostResponseDTO deletePost = new PostResponseDTO();
+
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", 1L))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
+
+        verify(postService, times(1)).deletePostById(deletePost.getId());
+
+    }
+
 }

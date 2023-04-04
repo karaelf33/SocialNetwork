@@ -8,7 +8,7 @@ public interface SocialNetworkPostService {
     PostResponseDTO getPostById(Long postId);
     PostResponseDTO createPost(PostResponseDTO postDTO);
 
-    void deletePostById(Long postId);
+    PostResponseDTO deletePostById(Long postId);
 
     PostResponseDTO updatePostContentById(Long postId, String content);
 

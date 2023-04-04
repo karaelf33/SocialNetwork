@@ -107,12 +107,6 @@
 			<version>1.16.0</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>3.6.0</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>

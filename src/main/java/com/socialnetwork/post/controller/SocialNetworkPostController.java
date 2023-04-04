@@ -36,9 +36,8 @@ public class SocialNetworkPostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePostById(@PathVariable("id") Long postId) {
-        postService.deletePostById(postId);
-        return ResponseEntity.ok().build();
+    public PostResponseDTO deletePostById(@PathVariable("id") Long postId) {
+        return postService.deletePostById(postId);
     }
 
     @PatchMapping("view-count/{id}/{viewCount}")

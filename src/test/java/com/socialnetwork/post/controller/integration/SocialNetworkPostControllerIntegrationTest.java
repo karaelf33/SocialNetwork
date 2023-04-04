@@ -47,7 +47,6 @@ public class SocialNetworkPostControllerIntegrationTest {
     @Autowired
     private SocialNetworkPostMapper postMapper;
     private final ObjectMapper objectMapper = new ObjectMapper();
-
     @BeforeEach
     public void setUp() {
         postRepository.deleteAll();
