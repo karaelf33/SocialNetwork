@@ -57,7 +57,9 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
 
     @Override
     public PostResponseDTO deletePostById(Long postId) {
-        SocialNetworkPost postToDelete = postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
+        SocialNetworkPost postToDelete = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
+
         postRepository.delete(postToDelete);
         logger.info("Post with ID {} deleted", postId);
 

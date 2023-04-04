@@ -133,14 +133,17 @@ class SocialNetworkPostControllerTest {
 
     @Test
     void deletePostWhenIfNotExist_and_throwException() throws Exception {
-        PostResponseDTO deletePost = new PostResponseDTO();
+        Long postId = 1L;
+        Mockito.when(postService.getPostById(postId)).thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
 
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", 1L))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", postId))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> assertEquals("Post not found with id " + postId,
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
-        verify(postService, times(1)).deletePostById(deletePost.getId());
+        verify(postService, times(1)).deletePostById(postId);
 
     }
 
