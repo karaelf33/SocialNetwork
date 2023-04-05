@@ -41,8 +41,8 @@ public class SocialNetworkPostController {
     }
 
     @PatchMapping("view-count/{id}/{viewCount}")
-    public ResponseEntity<PostResponseDTO> updatePostViewCountById(@PathVariable("id") Long postId, @PathVariable Long viewCount) {
-        return ResponseEntity.ok(postService.updatePostViewCountById(postId, viewCount));
+    public PostResponseDTO updatePostViewCountById(@PathVariable("id") Long postId, @PathVariable Long viewCount) {
+        return postService.updatePostViewCountById(postId, viewCount);
     }
 
     @PatchMapping("content/{id}")

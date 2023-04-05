@@ -134,7 +134,7 @@ class SocialNetworkPostControllerTest {
     @Test
     void deletePostWhenIfNotExist_and_throwException() throws Exception {
         long postId = 1L;
-        Mockito.when(postService.deletePostById(postId)).thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
+        when(postService.deletePostById(postId)).thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
 
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", postId))
@@ -144,6 +144,40 @@ class SocialNetworkPostControllerTest {
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         verify(postService, times(1)).deletePostById(postId);
+
+    }
+
+    @Test
+    void updatePostViewCountById_returnPostResponseDTO_whenViewCountUpdated_Successfully() throws Exception {
+
+        long postId = 1L;
+        long viewCount = 100L;
+        PostResponseDTO t = new PostResponseDTO();
+        t.setId(postId);
+        when(postService.updatePostViewCountById(postId, viewCount)).thenReturn(t);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/v1/api/posts/view-count/{id}/{viewCount}"
+                        , postId, viewCount))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", notNullValue()));
+        verify(postService, times(1)).updatePostViewCountById(postId, viewCount);
+
+    }
+
+    @Test
+    void updatePostViewCountById_throw_whenPostIsNotExist() throws Exception {
+
+        long postId = 1L;
+        long viewCount = 100L;
+        when(postService.updatePostViewCountById(postId, viewCount))
+                .thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/v1/api/posts/view-count/{id}/{viewCount}"
+                        , postId, viewCount))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> assertEquals("Post not found with id " + postId,
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+        verify(postService, times(1)).updatePostViewCountById(postId, viewCount);
 
     }
 
