@@ -75,7 +75,8 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
 
     @Override
     public PostResponseDTO updatePostContentById(Long postId, String content) {
-        SocialNetworkPost post = postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
+        SocialNetworkPost post = postRepository.findById(postId)
+                .orElseThrow(()->new ResourceNotFoundException("Post not found with id " + postId));
         post.setContent(content);
         SocialNetworkPost updatedPost = postRepository.save(post);
         logger.info("Post with id: {} has been updated successfully", postId);

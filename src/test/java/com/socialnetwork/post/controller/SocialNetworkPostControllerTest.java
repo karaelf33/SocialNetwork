@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.socialnetwork.post.utils.Constants.CONTENT;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -122,7 +123,8 @@ class SocialNetworkPostControllerTest {
 
         when(postService.deletePostById(deletePost.getId())).thenReturn(deletePost);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", deletePost.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/v1/api/posts/{id}", deletePost.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.author", is(deletePost.getAuthor())));
@@ -157,7 +159,8 @@ class SocialNetworkPostControllerTest {
         when(postService.updatePostViewCountById(postId, viewCount)).thenReturn(t);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/v1/api/posts/view-count/{id}/{viewCount}"
-                        , postId, viewCount))
+                        , postId, viewCount).contentType(MediaType.APPLICATION_JSON))
+
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", notNullValue()));
         verify(postService, times(1)).updatePostViewCountById(postId, viewCount);
@@ -181,4 +184,39 @@ class SocialNetworkPostControllerTest {
 
     }
 
+    @Test
+    void updatePostContentById_returnPostResponseDTO_whenViewCountUpdated_Successfully() throws Exception {
+
+        long postId = 1L;
+        PostResponseDTO expectedResponse = new PostResponseDTO();
+        expectedResponse.setId(postId);
+        expectedResponse.setContent(CONTENT);
+        when(postService.updatePostContentById(postId, CONTENT)).thenReturn(expectedResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/v1/api/posts/content/{id}", postId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CONTENT))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(postId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value(CONTENT));
+
+        verify(postService, times(1)).updatePostContentById(postId, CONTENT);
+
+    }
+
+    @Test
+    void updatePostContentById_throw_whenPostItNotExist() throws Exception {
+
+        long postId = 1L;
+        when(postService.updatePostContentById(postId, CONTENT))
+                .thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/v1/api/posts/content/{id}"
+                        , postId).content(CONTENT))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> assertEquals("Post not found with id " + postId,
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+        verify(postService, times(1)).updatePostContentById(postId, CONTENT);
+
+    }
 }
