@@ -48,7 +48,6 @@ public class SocialNetworkPostController {
     @PatchMapping("content/{id}")
     public PostResponseDTO updatePostContentById(@PathVariable("id") Long postId,
                                                  @RequestBody @NotBlank String content) {
-
         return postService.updatePostContentById(postId, content);
     }
 
