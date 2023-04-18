@@ -3,7 +3,8 @@ package com.socialnetwork.post.controller;
 import com.socialnetwork.post.dto.PostResponseDTO;
 import com.socialnetwork.post.service.SocialNetworkPostService;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,8 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
 
 @RestController
 @RequestMapping("v1/api/posts")
@@ -36,6 +40,7 @@ public class SocialNetworkPostController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = TOP_TEN_POSTS_CACHE_KEY, allEntries=true)
     public PostResponseDTO deletePostById(@PathVariable("id") Long postId) {
         return postService.deletePostById(postId);
     }
@@ -51,11 +56,9 @@ public class SocialNetworkPostController {
         return postService.updatePostContentById(postId, content);
     }
 
-    // TODO: In the future, we may need to limit the number of parameters that this method can receive.
-    //  For example, we might need to find only the top 20 parameters.
-    //  To make this method more flexible and adaptable to such changes, it should be made generic.
-    @GetMapping("/top-ten")
-    public List<PostResponseDTO> getTopTenPostByViewCount() {
-        return postService.getTopTenPostByViewCount();
+    @GetMapping("/top")
+    @Cacheable(value = TOP_TEN_POSTS_CACHE_KEY)
+    public List<PostResponseDTO> getTopKPostByViewCount(@RequestParam(required = false) Integer postNumber) {
+        return postService.getTopKPostByViewCount(postNumber);
     }
 }

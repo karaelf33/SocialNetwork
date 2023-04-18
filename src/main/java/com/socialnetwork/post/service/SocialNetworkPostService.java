@@ -14,7 +14,6 @@ public interface SocialNetworkPostService {
 
     PostResponseDTO updatePostViewCountById(Long postId, Long viewCount);
 
-    List<PostResponseDTO> getTopTenPostByViewCount();
-
+    List<PostResponseDTO> getTopKPostByViewCount(Integer postNumber);
 }
 
