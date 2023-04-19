@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static com.socialnetwork.post.utils.Constants.AUTHOR;
 import static com.socialnetwork.post.utils.Constants.CONTENT;
-import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
+import static com.socialnetwork.post.utils.Constants.TOP_K_POSTS_CACHE_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -138,13 +138,13 @@ class SocialNetworkPostServiceImplTest {
         expectedList.add(new SocialNetworkPost());
         expectedList.add(new SocialNetworkPost());
         expectedList.add(new SocialNetworkPost());
-        when(cacheService.get(TOP_TEN_POSTS_CACHE_KEY)).thenReturn(expectedList);
+        when(cacheService.get(TOP_K_POSTS_CACHE_KEY)).thenReturn(expectedList);
 
         List<SocialNetworkPost> actualList = postService.getTopsPostFromCache();
 
         assertEquals(expectedList, actualList);
         verify(cacheService, Mockito.times(1))
-                .get(TOP_TEN_POSTS_CACHE_KEY);
+                .get(TOP_K_POSTS_CACHE_KEY);
     }
 
     @Test

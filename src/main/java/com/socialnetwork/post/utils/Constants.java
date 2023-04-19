@@ -1,7 +1,7 @@
 package com.socialnetwork.post.utils;
 
 public class Constants {
-    public static final String TOP_TEN_POSTS_CACHE_KEY = "topTenPosts";
+    public static final String TOP_K_POSTS_CACHE_KEY = "topKPosts";
     public static final String AUTHOR = "Author";
     public static final String CONTENT = "Content";
 

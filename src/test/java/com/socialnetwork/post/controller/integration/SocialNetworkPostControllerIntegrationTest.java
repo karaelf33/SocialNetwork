@@ -113,4 +113,6 @@ public class SocialNetworkPostControllerIntegrationTest {
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
+
+
 }

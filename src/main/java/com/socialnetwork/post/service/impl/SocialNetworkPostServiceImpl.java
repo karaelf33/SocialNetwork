@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.socialnetwork.post.utils.Constants.LAST_ITEM_OF_POST_LIST_IN_CACHE;
-import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
+import static com.socialnetwork.post.utils.Constants.TOP_K_POSTS_CACHE_KEY;
 
 
 @Service
@@ -62,20 +62,20 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
         postRepository.delete(postToDelete);
         logger.info("Post with ID {} deleted", postId);
 
-     /*   List<SocialNetworkPost> cacheTopsPost = getTopsPostFromCache();
+        List<SocialNetworkPost> cacheTopsPost = getTopsPostFromCache();
         if (cacheTopsPost!=null && cacheTopsPost.contains(postToDelete)) {
-            List<SocialNetworkPost> updatedTopPosts = postRepository.findTop10ByOrderByViewCountDesc();
-            cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, updatedTopPosts);
+            List<SocialNetworkPost> updatedTopPosts = postRepository.findTopXByOrderByViewCountDesc(cacheTopsPost.size());
+            cacheService.replace(TOP_K_POSTS_CACHE_KEY, updatedTopPosts);
             logger.info("Top posts cache updated");
-        }*/
-    return postMapper.toDto(postToDelete);
+        }
+        return postMapper.toDto(postToDelete);
     }
 
 
     @Override
     public PostResponseDTO updatePostContentById(Long postId, String content) {
         SocialNetworkPost post = postRepository.findById(postId)
-                .orElseThrow(()->new ResourceNotFoundException("Post not found with id " + postId));
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         post.setContent(content);
         SocialNetworkPost updatedPost = postRepository.save(post);
         logger.info("Post with id: {} has been updated successfully", postId);
@@ -84,14 +84,14 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     }
 
     @Override
-    @Cacheable(value = "topTenPosts", key = "#postId", unless = "#result.viewCount < 100")
+    @Cacheable(value = TOP_K_POSTS_CACHE_KEY, key = "#postId", unless = "#result.viewCount < 100")
     public PostResponseDTO updatePostViewCountById(Long postId, Long viewCount) {
         SocialNetworkPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post" + "id" + postId));
 
         post.setViewCount(post.getViewCount() + viewCount);
         postRepository.save(post);
-     //   replaceTopPostsCacheIfNewPostHasHigerViewCount(post);
+        replaceTopPostsCacheIfNewPostHasHigerViewCount(post);
         return postMapper.toDto(post);
     }
 
@@ -99,15 +99,16 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
     public List<PostResponseDTO> getTopKPostByViewCount(Integer postNumber) {
         logger.info("Entering getTopTenPostByViewCount()");
 
-        List<SocialNetworkPost> topTenPosts =  postRepository.findTopXByOrderByViewCountDesc(postNumber);
+        List<SocialNetworkPost> topTenPosts = postRepository.findTopXByOrderByViewCountDesc(postNumber);
         List<PostResponseDTO> dtoList = postMapper.toDtoList(topTenPosts);
         logger.info("Returning topTenPosts: {}", dtoList);
         return dtoList;
     }
+
     @Override
     public List<SocialNetworkPost> getTopsPostFromCache() {
         return new ObjectMapper().convertValue(
-                cacheService.get(TOP_TEN_POSTS_CACHE_KEY), new TypeReference<>() {
+                cacheService.get(TOP_K_POSTS_CACHE_KEY), new TypeReference<>() {
                 });
     }
 
@@ -122,7 +123,7 @@ public class SocialNetworkPostServiceImpl implements SocialNetworkPostService, P
             topsPostFromCache.add(newPost);
             topsPostFromCache.sort(Comparator.comparingLong(SocialNetworkPost::getViewCount).reversed());
         }
-        cacheService.replace(TOP_TEN_POSTS_CACHE_KEY, topsPostFromCache);
+        cacheService.replace(TOP_K_POSTS_CACHE_KEY, topsPostFromCache);
     }
 
 }

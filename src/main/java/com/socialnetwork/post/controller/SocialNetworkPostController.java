@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-import static com.socialnetwork.post.utils.Constants.TOP_TEN_POSTS_CACHE_KEY;
+import static com.socialnetwork.post.utils.Constants.TOP_K_POSTS_CACHE_KEY;
 
 @RestController
 @RequestMapping("v1/api/posts")
@@ -40,7 +40,7 @@ public class SocialNetworkPostController {
     }
 
     @DeleteMapping("/{id}")
-    @CacheEvict(value = TOP_TEN_POSTS_CACHE_KEY, allEntries=true)
+    @CacheEvict(value = TOP_K_POSTS_CACHE_KEY, allEntries=true)
     public PostResponseDTO deletePostById(@PathVariable("id") Long postId) {
         return postService.deletePostById(postId);
     }
@@ -57,7 +57,7 @@ public class SocialNetworkPostController {
     }
 
     @GetMapping("/top")
-    @Cacheable(value = TOP_TEN_POSTS_CACHE_KEY)
+    @Cacheable(value = TOP_K_POSTS_CACHE_KEY)
     public List<PostResponseDTO> getTopKPostByViewCount(@RequestParam(required = false) Integer postNumber) {
         return postService.getTopKPostByViewCount(postNumber);
     }
