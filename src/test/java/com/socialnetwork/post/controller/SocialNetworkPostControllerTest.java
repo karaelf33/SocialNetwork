@@ -99,15 +99,16 @@ class SocialNetworkPostControllerTest {
     }
 
     @Test
-    void getTopTenPostByViewCount_returnListOfPosts() throws Exception {
+    void getTopK_Post_ByViewCount_returnListOfPosts() throws Exception {
         List<PostResponseDTO> expectedPosts = Arrays.asList(new PostResponseDTO(), new PostResponseDTO(), new PostResponseDTO());
-        when(postService.getTopTenPostByViewCount()).thenReturn(expectedPosts);
+        when(postService.getTopKPostByViewCount(expectedPosts.size())).thenReturn(expectedPosts);
 
-        mockMvc.perform(get("/v1/api/posts/top-ten")
+        mockMvc.perform(get("/v1/api/posts/top")
+                        .param("postNumber", String.valueOf(expectedPosts.size()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(postService, times(1)).getTopTenPostByViewCount();
+        verify(postService, times(1)).getTopKPostByViewCount(expectedPosts.size());
     }
 
     @Test
@@ -195,12 +196,10 @@ class SocialNetworkPostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value(CONTENT));
 
         verify(postService, times(1)).updatePostContentById(postId, CONTENT);
-
     }
 
     @Test
     void updatePostContentById_throw_whenPostItNotExist() throws Exception {
-
         long postId = 1L;
         when(postService.updatePostContentById(postId, CONTENT))
                 .thenThrow(new ResourceNotFoundException("Post not found with id " + postId));
@@ -211,6 +210,5 @@ class SocialNetworkPostControllerTest {
                 .andExpect(result -> assertEquals("Post not found with id " + postId,
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
         verify(postService, times(1)).updatePostContentById(postId, CONTENT);
-
     }
 }
